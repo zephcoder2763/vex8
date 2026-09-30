@@ -9,7 +9,7 @@ fn main() {
     let mut file_name = String::from("");
     io::stdin().read_line(&mut file_name).expect("Failed to read File name, please try again.");
     let trimmed_file_name: String = String::from(file_name.trim());
-    let program= match fs::read_to_string(trimmed_file_name) {
+    let program= match fs::read(trimmed_file_name) {
         Ok(v) => {v},
         Err(_e) => return,
     };
@@ -17,8 +17,8 @@ fn main() {
     let mut program_memory: Vec<u8> = Vec::new();
 
     //can easily be implemented with .map but im lowk lazy and dont wanna rewrite it rn :/
-    for byte in program.split_whitespace() {
-        let number = u8::from_str_radix(byte, 16).expect("invalid hex byte");
+    for byte in program {
+        let number = u8::from_str_radix(&format!("{:02X}", byte), 16).expect("invalid hex byte");
         program_memory.push(number);
     }
 
