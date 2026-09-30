@@ -5,7 +5,7 @@ the emulator is designed to be simple, with only 255 bytes for program memory an
 there is no VRAM as of now, im working on it AND an assembler
 ### 2. Features im working on
 1. VRAM
-2. Assembler
+2. Assembler - DONE! CHECK MY REPOS FOR vex8-assembler
 3. JIT (Jmp if true, not just in time compiliation thats not hgow tjat works!!!!)
 4. CMP (comparison of 2 registers!!)
 ### 3. Current instruction set!
