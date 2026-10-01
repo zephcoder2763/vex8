@@ -52,6 +52,18 @@ fn main() {
             0x07 => {
                 pc = program_memory[pc+1] as usize
             },
+            0x08 => { //CMP
+                if (registers[program_memory[pc+1] as usize] == registers[program_memory[pc+2] as usize]) {
+                    registers[8] = 1;
+                } else {
+                    registers[8] = 0;
+                }
+            },
+            0x09 => { // JE
+                if (registers[8] == 1) {
+                    pc = program_memory[pc+1] as usize
+                }
+            },
             _ => {println!("Invalid Instruction! 0x{:02X}", opcode);
                   return;
             }
