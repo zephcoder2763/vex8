@@ -54,13 +54,13 @@ fn main() {
             },
             0x08 => { //CMP
                 if (registers[program_memory[pc+1] as usize] == registers[program_memory[pc+2] as usize]) {
-                    registers[8] = 1;
+                    registers[7] = 1;
                 } else {
-                    registers[8] = 0;
+                    registers[7] = 0;
                 }
             },
             0x09 => { // JE
-                if (registers[8] == 1) {
+                if (registers[7] == 1) {
                     pc = program_memory[pc+1] as usize
                 }
             },
