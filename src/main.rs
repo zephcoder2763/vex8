@@ -5,6 +5,7 @@ use std::fs;
 fn main() {
     let mut registers = [0u8; 8];
     let mut memory = [0u8; 255];
+    let mut vmemory = [0u8; 255];
     println!("Please Enter the File you would like to run on the Vex8 Virtual Emulator: ");
     let mut file_name = String::from("");
     io::stdin().read_line(&mut file_name).expect("Failed to read File name, please try again.");
@@ -64,6 +65,11 @@ fn main() {
                     pc = program_memory[pc+1] as usize
                 }
             },
+            0x0A => { // INT
+                if (program_memory[pc+1] as usize == 0x10) {
+                    println!("Printing!");
+                }
+            }
             _ => {println!("Invalid Instruction! 0x{:02X}", opcode);
                   return;
             }
