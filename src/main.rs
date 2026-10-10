@@ -3,9 +3,16 @@ use std::fs;
 
 
 fn main() {
-    let mut registers = [0u8; 8];
-    let mut memory = [0u8; 255];
+    let mut registers = [0u8; 9];
+    let mut memory = [[0u8; 255]; 16];
     let mut vmemory = [0u8; 255];
+    let mut palette = [0u32; 5];
+    palette[0] = 0x000000;
+    palette[1] = 0xFF0000;
+    palette[2] = 0x00FF00;
+    palette[3] = 0x0000FF;
+    palette[4] = 0xFFFFFF;
+
     println!("Please Enter the File you would like to run on the Vex8 Virtual Emulator: ");
     let mut file_name = String::from("");
     io::stdin().read_line(&mut file_name).expect("Failed to read File name, please try again.");
@@ -42,13 +49,13 @@ fn main() {
                 registers[program_memory[pc+1] as usize] = registers[program_memory[pc+2] as usize] - registers[program_memory[pc+3] as usize];
             },
             0x04 => {
-                registers[program_memory[pc+1] as usize] = program_memory[pc+2]
+                registers[program_memory[pc+1] as usize] = program_memory[pc+2];
             },
             0x05 => {
-                memory[program_memory[pc+1] as usize] = registers[program_memory[pc+2] as usize];
+                memory[registers[8] as usize][program_memory[pc+1] as usize] = registers[program_memory[pc+2] as usize];
             },
             0x06 => {
-                registers[program_memory[pc+1] as usize] = memory[program_memory[pc+2] as usize];
+                registers[program_memory[pc+1] as usize] = memory[registers[8] as usize][program_memory[pc+2] as usize];
             },
             0x07 => {
                 pc = program_memory[pc+1] as usize
@@ -69,7 +76,10 @@ fn main() {
                 if (program_memory[pc+1] as usize == 0x10) {
                     println!("Printing!");
                 }
-            }
+            },
+            0x0B => { //SPI
+                registers[8] = program_memory[pc+1];
+            },
             _ => {println!("Invalid Instruction! 0x{:02X}", opcode);
                   return;
             }
@@ -86,3 +96,16 @@ fn main() {
     }
     
 } 
+
+fn conversion(palette: &[u32; 5], vmem: &[u8; 255]) -> [u32; 255] {
+    let mut pixel_buffer: [u32; 255] = [0u32; 255];
+    for (i, &idx) in vmem.iter().enumerate() {
+        let color = palette.get(idx as usize).copied().unwrap_or(0x000000);
+        // 0x00RRGGBB -> 0xFFBBGGRR (RGBA byte order, alpha = 1)
+        let r = (color >> 16) & 0xFF;
+        let g = (color >> 8) & 0xFF;
+        let b = color & 0xFF;
+        pixel_buffer[i] = 0xFF000000 | (b << 16) | (g << 8) | r;
+    }
+    pixel_buffer
+}
